@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../resources/data.dart';
+import 'package:share/share.dart';
+
+enum AppConstants { increaseFont, decreaseFont, shareApp }
 
 class StoryDetails extends StatefulWidget {
   String storyName;
@@ -9,58 +12,71 @@ class StoryDetails extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _StoryDetailsState();
   }
 }
 
 class _StoryDetailsState extends State<StoryDetails> {
   double fontSize = 16.0;
-  double textScaleFactor;
-  TextStyle storyStyle = TextStyle(
-    fontSize: 16.0,
-  );
+  double maxFontSize = 50;
+  double minFontSize = 10;
+  // double _initTextScaleFactor=1;
+
+  TextStyle storyStyle(_fontSize) => TextStyle(
+        fontSize: _fontSize,
+      );
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    textScaleFactor = 1;
+  }
+
+  _buildPopupMenuItem(AppConstants constants, String text) {
+    return PopupMenuItem<AppConstants>(
+      value: constants,
+      child: GestureDetector(
+          onTap: () {
+            setState(() {
+              if (constants == AppConstants.increaseFont &&
+                  fontSize < maxFontSize) {
+                fontSize = fontSize + 3;
+              } else if (constants == AppConstants.decreaseFont &&
+                  fontSize > minFontSize) {
+                fontSize = fontSize - 3;
+              } else if (constants == AppConstants.shareApp) {
+                Share.share(widget.storyDetails);
+              }
+            });
+          },
+          child: Text(text)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.storyName)),
+      appBar: AppBar(
+        title: Text(widget.storyName),
+        actions: <Widget>[
+          PopupMenuButton<AppConstants>(
+            itemBuilder: (BuildContext context) => [
+                  _buildPopupMenuItem(
+                      AppConstants.decreaseFont, "Decrease Font"),
+                  _buildPopupMenuItem(
+                      AppConstants.increaseFont, "Increase Font"),
+                  _buildPopupMenuItem(AppConstants.shareApp, "Share App")
+                ],
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(20.0),
-          child: GestureDetector(
-              onScaleUpdate: (ScaleUpdateDetails details) {
-                // if (textScaleFactor == 10) {
-                // } else {
-                //  print(details.scale);
-                print('-------');
-                print(details.scale);
-                var scale = details.scale;
-                setState(() {
-                  textScaleFactor = scale;
-                });
-                //   }
-              },
-              onScaleEnd: (ScaleEndDetails details) {
-             //   print(details.velocity);
-                // setState(() {
-                //   textScaleFactor = 1;
-                // });
-              },
-              child: Text(widget.storyDetails,
-                  textScaleFactor: textScaleFactor,
-                  maxLines: 100000,
-                  softWrap: true,
-                  textAlign: TextAlign.left,
-                  style: storyStyle)),
-        ),
+            padding: EdgeInsets.all(20.0),
+            child: Text(widget.storyDetails,
+                maxLines: 100000,
+                softWrap: true,
+                textAlign: TextAlign.left,
+                style: storyStyle(fontSize))),
       ),
     );
   }
