@@ -1,0 +1,48 @@
+{
+    "project_info": {
+      "project_number": "142252050289",
+      "firebase_url": "https://bengali-short-story.firebaseio.com",
+      "project_id": "bengali-short-story",
+      "storage_bucket": "bengali-short-story.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:142252050289:android:72b382eec14edd5a",
+          "android_client_info": {
+            "package_name": "com.think_geek.GolpoGucho"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "142252050289-tkugeh54oki159gl62lac5a27rc1b6pv.apps.googleusercontent.com",
+            "client_type": 1,
+            "android_info": {
+              "package_name": "com.think_geek.GolpoGucho",
+              "certificate_hash": "a02ace4e3a08570c95d3a603cc7f170249f10915"
+            }
+          },
+          {
+            "client_id": "142252050289-h60thfki10lnb5gefs7e4k2qc63ka3ke.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyAozjQBU7Uo2NJl0owLNq9lSukpmEMwWZo"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "142252050289-h60thfki10lnb5gefs7e4k2qc63ka3ke.apps.googleusercontent.com",
+                "client_type": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }

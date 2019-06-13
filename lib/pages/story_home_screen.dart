@@ -3,12 +3,38 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../resources/data.dart';
 import './story_details.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
-class StoryHome extends StatelessWidget {
+class StoryHome extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _StoryHomeState();
+  }
+}
+
+class _StoryHomeState extends State<StoryHome> {
   TextStyle headerTextStyle =
       TextStyle(fontSize: 22.0, fontWeight: FontWeight.w700);
   TextStyle descTextStyle =
       TextStyle(fontSize: 19.0, fontWeight: FontWeight.w500);
+
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    keywords: <String>['foo', 'bar'],
+    contentUrl: 'http://foo.com/bar.html',
+    childDirected: true,
+    nonPersonalizedAds: true,
+  );
+
+  BannerAd _bannerAd;
+
+  BannerAd createBannerAd() {
+    return BannerAd(
+      adUnitId: BannerAd.testAdUnitId, //ca-app-pub-1734447714483073/8319456188
+      size: AdSize.banner,
+      targetingInfo: targetingInfo,
+      listener: (MobileAdEvent event) {},
+    );
+  }
 
   Widget cardImage(image) => Image.asset(
         'assets/images/$image',
@@ -72,12 +98,40 @@ class StoryHome extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _bannerAd = null;
+    FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _bannerAd.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: Container(
         margin: EdgeInsets.all(10.0),
+        // padding: EdgeInsets.only(),
         child: ListView.builder(
+          // separatorBuilder: (BuildContext context, index) {
+          //   if( index!=0 && index % 2 == 0){
+          //     return Container(
+          //       child: ,
+          //     );
+          //   }
+          //   else{
+          //     return Container();
+          //   }
+          // },
           itemCount: storyList.length,
           itemBuilder: (BuildContext context, index) {
             return _buildStoryCard(context, storyList[index]);

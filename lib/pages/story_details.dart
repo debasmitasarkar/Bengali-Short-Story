@@ -1,5 +1,8 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+
 import '../resources/data.dart';
 
 class StoryDetails extends StatefulWidget {
@@ -9,7 +12,6 @@ class StoryDetails extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _StoryDetailsState();
   }
 }
@@ -17,15 +19,62 @@ class StoryDetails extends StatefulWidget {
 class _StoryDetailsState extends State<StoryDetails> {
   double fontSize = 16.0;
   double textScaleFactor;
+
   TextStyle storyStyle = TextStyle(
     fontSize: 16.0,
   );
 
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    keywords: <String>['foo', 'bar'],
+    contentUrl: 'http://foo.com/bar.html',
+    childDirected: true,
+    nonPersonalizedAds: true,
+  );
+
+  BannerAd _bannerAd;
+  InterstitialAd _interstitialAd;
+
+  BannerAd createBannerAd() {
+    return BannerAd(
+      adUnitId: BannerAd.testAdUnitId, //ca-app-pub-1734447714483073/8319456188
+      size: AdSize.banner,
+      targetingInfo: targetingInfo,
+      listener: (MobileAdEvent event) {
+        print("BannerAd event $event");
+      },
+    );
+  }
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+      adUnitId:
+          InterstitialAd.testAdUnitId, //ca-app-pub-1734447714483073/7221641714
+      targetingInfo: targetingInfo,
+      listener: (MobileAdEvent event) {
+        print("InterstitialAd event $event");
+      },
+    );
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     textScaleFactor = 1;
+    _bannerAd = null;
+    _interstitialAd = createInterstitialAd()
+      ..load()
+      ..show();
+    // FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
+    // _bannerAd = createBannerAd()
+    //   ..load()
+    //   ..show();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _bannerAd.dispose();
   }
 
   @override
@@ -35,6 +84,7 @@ class _StoryDetailsState extends State<StoryDetails> {
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(20.0),
+          margin: EdgeInsets.only(bottom: 50.0),
           child: GestureDetector(
               onScaleUpdate: (ScaleUpdateDetails details) {
                 // if (textScaleFactor == 10) {
@@ -49,7 +99,7 @@ class _StoryDetailsState extends State<StoryDetails> {
                 //   }
               },
               onScaleEnd: (ScaleEndDetails details) {
-             //   print(details.velocity);
+                //   print(details.velocity);
                 // setState(() {
                 //   textScaleFactor = 1;
                 // });
