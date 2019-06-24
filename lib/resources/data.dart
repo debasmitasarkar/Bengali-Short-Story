@@ -1,6 +1,6 @@
 var appAdId = "ca-app-pub-1734447714483073~2352458415";
-var bannerAdId = "ca-app-pub-1734447714483073/8319456188";
-var interstitialAdId = 'ca-app-pub-1734447714483073/7221641714';
+var bannerAdId = "ca-app-pub-3940256099942544/6300978111";
+var interstitialAdId = 'ca-app-pub-3940256099942544/1033173712';
 
 List<Map<String, dynamic>> storyList = [
   {

@@ -29,7 +29,7 @@ class _StoryHomeState extends State<StoryHome> {
 
   BannerAd createBannerAd() {
     return BannerAd(
-      adUnitId: BannerAd.testAdUnitId, //ca-app-pub-1734447714483073/8319456188
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
       size: AdSize.banner,
       targetingInfo: targetingInfo,
       listener: (MobileAdEvent event) {},
@@ -109,7 +109,6 @@ class _StoryHomeState extends State<StoryHome> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _bannerAd.dispose();
   }
@@ -117,21 +116,16 @@ class _StoryHomeState extends State<StoryHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Center(
+            child: Text(
+          'Bengali Short Stories',
+        )),
+      ),
       body: Container(
         margin: EdgeInsets.all(10.0),
-        // padding: EdgeInsets.only(),
+        padding: EdgeInsets.only(bottom: 50.0),
         child: ListView.builder(
-          // separatorBuilder: (BuildContext context, index) {
-          //   if( index!=0 && index % 2 == 0){
-          //     return Container(
-          //       child: ,
-          //     );
-          //   }
-          //   else{
-          //     return Container();
-          //   }
-          // },
           itemCount: storyList.length,
           itemBuilder: (BuildContext context, index) {
             return _buildStoryCard(context, storyList[index]);

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 
 import '../resources/data.dart';
+import 'package:share/share.dart';
+
+enum AppConstants { increaseFont, decreaseFont, shareApp }
 
 class StoryDetails extends StatefulWidget {
   String storyName;
@@ -18,11 +21,13 @@ class StoryDetails extends StatefulWidget {
 
 class _StoryDetailsState extends State<StoryDetails> {
   double fontSize = 16.0;
-  double textScaleFactor;
+  double maxFontSize = 50;
+  double minFontSize = 10;
+  // double _initTextScaleFactor=1;
 
-  TextStyle storyStyle = TextStyle(
-    fontSize: 16.0,
-  );
+  TextStyle storyStyle(_fontSize) => TextStyle(
+        fontSize: _fontSize,
+      );
 
   static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
     keywords: <String>['foo', 'bar'],
@@ -36,7 +41,7 @@ class _StoryDetailsState extends State<StoryDetails> {
 
   BannerAd createBannerAd() {
     return BannerAd(
-      adUnitId: BannerAd.testAdUnitId, //ca-app-pub-1734447714483073/8319456188
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
       size: AdSize.banner,
       targetingInfo: targetingInfo,
       listener: (MobileAdEvent event) {
@@ -47,8 +52,7 @@ class _StoryDetailsState extends State<StoryDetails> {
 
   InterstitialAd createInterstitialAd() {
     return InterstitialAd(
-      adUnitId:
-          InterstitialAd.testAdUnitId, //ca-app-pub-1734447714483073/7221641714
+      adUnitId: 'ca-app-pub-3940256099942544/1033173712',
       targetingInfo: targetingInfo,
       listener: (MobileAdEvent event) {
         print("InterstitialAd event $event");
@@ -57,60 +61,71 @@ class _StoryDetailsState extends State<StoryDetails> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    textScaleFactor = 1;
-    _bannerAd = null;
-    _interstitialAd = createInterstitialAd()
-      ..load()
-      ..show();
-    // FirebaseAdMob.instance.initialize(appId: FirebaseAdMob.testAppId);
-    // _bannerAd = createBannerAd()
-    //   ..load()
-    //   ..show();
-  }
-
-  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     _bannerAd.dispose();
+    _interstitialAd.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _bannerAd = createBannerAd()
+      ..load()
+      ..show();
+    _interstitialAd = createInterstitialAd()
+      ..load()
+      ..show();
+  }
+
+  _buildPopupMenuItem(AppConstants constants, String text) {
+    return PopupMenuItem<AppConstants>(
+      value: constants,
+      child: GestureDetector(
+          onTap: () {
+            setState(() {
+              if (constants == AppConstants.increaseFont &&
+                  fontSize < maxFontSize) {
+                fontSize = fontSize + 3;
+              } else if (constants == AppConstants.decreaseFont &&
+                  fontSize > minFontSize) {
+                fontSize = fontSize - 3;
+              } else if (constants == AppConstants.shareApp) {
+                Share.share(widget.storyDetails);
+              }
+            });
+          },
+          child: Text(text)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.storyName)),
+      appBar: AppBar(
+        title: Text(widget.storyName),
+        actions: <Widget>[
+          PopupMenuButton<AppConstants>(
+            itemBuilder: (BuildContext context) => [
+                  _buildPopupMenuItem(
+                      AppConstants.decreaseFont, "Decrease Font"),
+                  _buildPopupMenuItem(
+                      AppConstants.increaseFont, "Increase Font"),
+                  _buildPopupMenuItem(AppConstants.shareApp, "Share App")
+                ],
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(20.0),
-          margin: EdgeInsets.only(bottom: 50.0),
-          child: GestureDetector(
-              onScaleUpdate: (ScaleUpdateDetails details) {
-                // if (textScaleFactor == 10) {
-                // } else {
-                //  print(details.scale);
-                print('-------');
-                print(details.scale);
-                var scale = details.scale;
-                setState(() {
-                  textScaleFactor = scale;
-                });
-                //   }
-              },
-              onScaleEnd: (ScaleEndDetails details) {
-                //   print(details.velocity);
-                // setState(() {
-                //   textScaleFactor = 1;
-                // });
-              },
-              child: Text(widget.storyDetails,
-                  textScaleFactor: textScaleFactor,
-                  maxLines: 100000,
-                  softWrap: true,
-                  textAlign: TextAlign.left,
-                  style: storyStyle)),
-        ),
+            padding: EdgeInsets.all(20.0),
+            margin: EdgeInsets.only(bottom: 40.0),
+            child: Text(widget.storyDetails,
+                maxLines: 100000,
+                softWrap: true,
+                textAlign: TextAlign.left,
+                style: storyStyle(fontSize))),
       ),
     );
   }
